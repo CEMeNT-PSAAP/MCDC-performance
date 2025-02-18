@@ -1,9 +1,0 @@
-#!/bin/tcsh
-#SBATCH -N <N_NODE>
-#SBATCH -J <JOB_NAME>
-#SBATCH -t <TIME>
-#SBATCH -p pbatch
-#SBATCH -A orsu
-#SBATCH -o output.out
-
-<COMMANDS>
