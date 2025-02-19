@@ -67,10 +67,10 @@ pincell:
         analog:
             python:
                 logN_min: 1
-                logN_max: 5
-                N_runs: 9
+                logN_max: 3
+                N_runs: 7
 
             numba:
                 logN_min: 1
-                logN_max: 8
-                N_runs: 15
+                logN_max: 6
+                N_runs: 11

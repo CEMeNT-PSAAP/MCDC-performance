@@ -25,6 +25,7 @@ COMPILE_TIME["dane"]["kobayashi"]["implicit_capture"] = 55.052752989
 COMPILE_TIME["dane"]["kobayashi-coarse"]["analog"] = 43.325393946
 COMPILE_TIME["dane"]["kobayashi-coarse"]["implicit_capture"] = 43.353021065
 COMPILE_TIME["dane"]["shem361"]["analog"] = 46.255581683
+COMPILE_TIME["dane"]["pincell"]["analog"] = 44.184755025
 
 # TODO: Lassen, ...
 
@@ -118,7 +119,6 @@ for problem in tasks:
                 compile_time = COMPILE_TIME[platform][problem][method]
                 record[problem]["MC/DC"][method][mode]["compile_time"] = compile_time
                 runtime_wo_compilation = runtime - compile_time
-                print(runtime, compile_time)
                 simrate_wo_compilation = 10 * N_list / runtime_wo_compilation * 1e-3
                 record[problem]["MC/DC"][method][mode]["tracking_rate"] = float(
                     simrate_wo_compilation[-1]
