@@ -1,0 +1,8 @@
+#!/bin/bash
+#BSUB -nnodes <N_NODE>
+#BSUB -J <JOB_NAME>
+#BSUB -W <TIME>
+#BSUB -q pbatch
+#BSUB -o output.out
+
+<COMMANDS>

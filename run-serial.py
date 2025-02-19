@@ -9,23 +9,25 @@ import yaml
 from pathlib import Path
 
 
-# Supported compute platforms
-PLATFORMS = ["dane"]
-# TODO: Lassen, ...
+# Supported compute platforms and their parameters
+PLATFORMS = ["dane", "lassen", "tioga", "tuolumne"]
+#
+job_submission = {}
+job_submission["dane"] = 'sbatch'
+job_submission["lassen"] = 'bsub'
 
 # ======================================================================================
 # Run options
 # ======================================================================================
 
 parser = argparse.ArgumentParser(description="MC/DC Performance Test Suite - Serial")
-parser.add_argument("--platform", type=str, required="True", choices=["dane"])
-parser.add_argument("--pbs", type=str, required="True")
+parser.add_argument("--platform", type=str, required="True", choices=PLATFORMS)
 args, unargs = parser.parse_known_args()
 
 platform = args.platform
 
 # Get the PBS template
-with open(args.pbs, 'r') as f:
+with open("template-%s.pbs"%platform, 'r') as f:
     pbs_template = f.read()
 
 
@@ -97,7 +99,10 @@ for problem in tasks:
             pbs_text = pbs_template[:]
             pbs_text = pbs_text.replace('<N_NODE>', '1')
             pbs_text = pbs_text.replace('<JOB_NAME>', 'mcdc-ser-%s-%s-%s' % (problem, method, mode))
-            pbs_text = pbs_text.replace('<TIME>', '12:00:00')
+            if platform == 'dane':
+                pbs_text = pbs_text.replace('<TIME>', '12:00:00')
+            elif platform == 'lassen':
+                pbs_text = pbs_text.replace('<TIME>', '12:00')
 
             # Run parameters
             task = tasks[problem]["mcdc"][method][mode]
@@ -132,7 +137,7 @@ for problem in tasks:
                 f.write(pbs_text)
 
             # Submit job
-            os.system("sbatch submit.pbs")
+            os.system("%s submit.pbs" % job_submission[platform])
 
             os.chdir("..")
     os.chdir("../../..")
