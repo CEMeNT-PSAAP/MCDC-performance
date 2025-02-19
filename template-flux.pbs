@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#flux: -N <N_NODE>
+#flux: --job-name <JOB_NAME>
+#flux: -t <TIME>
+
+<COMMANDS>

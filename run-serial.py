@@ -15,6 +15,14 @@ PLATFORMS = ["dane", "lassen", "tioga", "tuolumne"]
 job_submission = {}
 job_submission["dane"] = 'sbatch'
 job_submission["lassen"] = 'bsub'
+job_submission["tioga"] = 'flux batch'
+job_submission["tuolumne"] = 'flux batch'
+#
+job_scheduler = {}
+job_scheduler["dane"] = 'slurm'
+job_scheduler["lassen"] = 'lsf'
+job_scheduler["tioga"] = 'flux'
+job_scheduler["tuolumne"] = 'flux'
 
 # ======================================================================================
 # Run options
@@ -25,9 +33,11 @@ parser.add_argument("--platform", type=str, required="True", choices=PLATFORMS)
 args, unargs = parser.parse_known_args()
 
 platform = args.platform
+job_submission = job_submission[platform]
+job_scheduler = job_scheduler[platform]
 
 # Get the PBS template
-with open("template-%s.pbs"%platform, 'r') as f:
+with open("template-%s.pbs"%job_scheduler, 'r') as f:
     pbs_template = f.read()
 
 
@@ -99,9 +109,11 @@ for problem in tasks:
             pbs_text = pbs_template[:]
             pbs_text = pbs_text.replace('<N_NODE>', '1')
             pbs_text = pbs_text.replace('<JOB_NAME>', 'mcdc-ser-%s-%s-%s' % (problem, method, mode))
-            if platform == 'dane':
+            if job_scheduler in ['slurm']:
                 pbs_text = pbs_text.replace('<TIME>', '12:00:00')
-            elif platform == 'lassen':
+            elif job_scheduler in ['flux']:
+                pbs_text = pbs_text.replace('<TIME>', '12h')
+            elif job_scheduler in ['lsf']:
                 pbs_text = pbs_text.replace('<TIME>', '12:00')
 
             # Run parameters
@@ -137,7 +149,7 @@ for problem in tasks:
                 f.write(pbs_text)
 
             # Submit job
-            os.system("%s submit.pbs" % job_submission[platform])
+            os.system("%s submit.pbs" % job_submission)
 
             os.chdir("..")
     os.chdir("../../..")
