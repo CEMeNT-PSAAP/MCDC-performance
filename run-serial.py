@@ -12,17 +12,23 @@ from pathlib import Path
 # Supported compute platforms and their parameters
 PLATFORMS = ["dane", "lassen", "tioga", "tuolumne"]
 #
-job_submission = {}
-job_submission["dane"] = 'sbatch'
-job_submission["lassen"] = 'bsub'
-job_submission["tioga"] = 'flux batch'
-job_submission["tuolumne"] = 'flux batch'
+JOB_SUBMISSION = {}
+JOB_SUBMISSION["dane"] = 'sbatch'
+JOB_SUBMISSION["lassen"] = 'bsub'
+JOB_SUBMISSION["tioga"] = 'flux batch'
+JOB_SUBMISSION["tuolumne"] = 'flux batch'
 #
-job_scheduler = {}
-job_scheduler["dane"] = 'slurm'
-job_scheduler["lassen"] = 'lsf'
-job_scheduler["tioga"] = 'flux'
-job_scheduler["tuolumne"] = 'flux'
+JOB_SCHEDULER = {}
+JOB_SCHEDULER["dane"] = 'slurm'
+JOB_SCHEDULER["lassen"] = 'lsf'
+JOB_SCHEDULER["tioga"] = 'flux'
+JOB_SCHEDULER["tuolumne"] = 'flux'
+#
+JOB_TIME = {}
+JOB_TIME['dane'] = "24:00:00"
+JOB_TIME['lassen'] = "12:00"
+JOB_TIME['tioga'] = "12h"
+JOB_TIME['tuolumne'] = "24h"
 
 # ======================================================================================
 # Run options
@@ -33,8 +39,9 @@ parser.add_argument("--platform", type=str, required="True", choices=PLATFORMS)
 args, unargs = parser.parse_known_args()
 
 platform = args.platform
-job_submission = job_submission[platform]
-job_scheduler = job_scheduler[platform]
+job_submission = JOB_SUBMISSION[platform]
+job_scheduler = JOB_SCHEDULER[platform]
+job_time = JOB_TIME[platform]
 
 # Get the PBS template
 with open("template-%s.pbs"%job_scheduler, 'r') as f:
@@ -109,12 +116,7 @@ for problem in tasks:
             pbs_text = pbs_template[:]
             pbs_text = pbs_text.replace('<N_NODE>', '1')
             pbs_text = pbs_text.replace('<JOB_NAME>', 'mcdc-ser-%s-%s-%s' % (problem, method, mode))
-            if job_scheduler in ['slurm']:
-                pbs_text = pbs_text.replace('<TIME>', '12:00:00')
-            elif job_scheduler in ['flux']:
-                pbs_text = pbs_text.replace('<TIME>', '12h')
-            elif job_scheduler in ['lsf']:
-                pbs_text = pbs_text.replace('<TIME>', '12:00')
+            pbs_text = pbs_text.replace('<TIME>', job_time)
 
             # Run parameters
             task = tasks[problem]["mcdc"][method][mode]

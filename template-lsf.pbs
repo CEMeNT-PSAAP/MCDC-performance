@@ -2,7 +2,7 @@
 #BSUB -nnodes <N_NODE>
 #BSUB -J <JOB_NAME>
 #BSUB -W <TIME>
-#BSUB -q pbatch
 #BSUB -o output.out
+#BSUB -e output.err
 
 <COMMANDS>

@@ -8,6 +8,9 @@ import os
 import yaml
 
 
+# Supported compute platforms
+PLATFORMS = ["dane", "lassen", "tioga", "tuolumne"]
+
 # Line styles
 STYLE = {"python": "g^-", "numba": "bo--", "openmc": "rs:"}
 
@@ -26,6 +29,27 @@ COMPILE_TIME["dane"]["kobayashi-coarse"]["analog"] = 43.325393946
 COMPILE_TIME["dane"]["kobayashi-coarse"]["implicit_capture"] = 43.353021065
 COMPILE_TIME["dane"]["shem361"]["analog"] = 46.255581683
 COMPILE_TIME["dane"]["pincell"]["analog"] = 44.184755025
+COMPILE_TIME["lassen"]["azurv1"]["analog"] = 43.288844207
+COMPILE_TIME["lassen"]["kobayashi"]["analog"] = 55.095778819
+COMPILE_TIME["lassen"]["kobayashi"]["implicit_capture"] = 55.052752989
+COMPILE_TIME["lassen"]["kobayashi-coarse"]["analog"] = 43.325393946
+COMPILE_TIME["lassen"]["kobayashi-coarse"]["implicit_capture"] = 43.353021065
+COMPILE_TIME["lassen"]["shem361"]["analog"] = 46.255581683
+COMPILE_TIME["lassen"]["pincell"]["analog"] = 44.184755025
+COMPILE_TIME["tioga"]["azurv1"]["analog"] = 43.288844207
+COMPILE_TIME["tioga"]["kobayashi"]["analog"] = 55.095778819
+COMPILE_TIME["tioga"]["kobayashi"]["implicit_capture"] = 55.052752989
+COMPILE_TIME["tioga"]["kobayashi-coarse"]["analog"] = 43.325393946
+COMPILE_TIME["tioga"]["kobayashi-coarse"]["implicit_capture"] = 43.353021065
+COMPILE_TIME["tioga"]["shem361"]["analog"] = 46.255581683
+COMPILE_TIME["tioga"]["pincell"]["analog"] = 44.184755025
+COMPILE_TIME["tuolumne"]["azurv1"]["analog"] = 43.288844207
+COMPILE_TIME["tuolumne"]["kobayashi"]["analog"] = 55.095778819
+COMPILE_TIME["tuolumne"]["kobayashi"]["implicit_capture"] = 55.052752989
+COMPILE_TIME["tuolumne"]["kobayashi-coarse"]["analog"] = 43.325393946
+COMPILE_TIME["tuolumne"]["kobayashi-coarse"]["implicit_capture"] = 43.353021065
+COMPILE_TIME["tuolumne"]["shem361"]["analog"] = 46.255581683
+COMPILE_TIME["tuolumne"]["pincell"]["analog"] = 44.184755025
 
 # TODO: Lassen, ...
 
@@ -35,7 +59,7 @@ COMPILE_TIME["dane"]["pincell"]["analog"] = 44.184755025
 
 # Option parser
 parser = argparse.ArgumentParser(description="MC/DC Performance Test Suite - Serial, Post Processor")
-parser.add_argument("--platform", type=str, required="True", choices=["dane"])
+parser.add_argument("--platform", type=str, required="True", choices=PLATFORMS)
 args, unargs = parser.parse_known_args()
 
 platform = args.platform
