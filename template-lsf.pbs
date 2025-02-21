@@ -5,4 +5,5 @@
 #BSUB -o output.out
 #BSUB -e output.err
 
+conda activate mcdc-interactive
 <COMMANDS>
