@@ -200,7 +200,7 @@ for problem in tasks:
     commands = ""
     previous_output = None
     for N in np.logspace(logN_min, logN_max, N_runs, dtype=int):
-        commands += "python build_xml.py %i\n" % (N)
+        commands += "python build-xml.py %i\n" % (N)
         commands += "openmc -s 1\n"
         commands += "mv statepoint.30.h5 output_%i.h5\n" % N
         commands += "python get_runtime.py output_%i.h5\n" % N

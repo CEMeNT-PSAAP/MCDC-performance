@@ -7,6 +7,6 @@
 
 conda init bash
 source ~/.bashrc
-conda activate mcdc-interactive
+conda activate mcdc-dev
 
 <COMMANDS>
