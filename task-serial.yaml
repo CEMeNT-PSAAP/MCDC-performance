@@ -5,11 +5,14 @@ azurv1:
                 logN_min: 1
                 logN_max: 5
                 N_runs: 9
-
             numba:
                 logN_min: 1
                 logN_max: 8
                 N_runs: 15
+    openmc:
+        logN_min: 1
+        logN_max: 8
+        N_runs: 15
 
 kobayashi-coarse:
     mcdc:
@@ -18,22 +21,23 @@ kobayashi-coarse:
                 logN_min: 1
                 logN_max: 5
                 N_runs: 9
-
             numba:
                 logN_min: 1
                 logN_max: 8
                 N_runs: 15
-
         implicit_capture:
             python:
                 logN_min: 1
                 logN_max: 4
                 N_runs: 7
-
             numba:
                 logN_min: 1
                 logN_max: 7
                 N_runs: 13
+    openmc: 
+        logN_min: 1
+        logN_max: 8
+        N_runs: 15
 
 kobayashi:
     mcdc:
@@ -42,12 +46,15 @@ kobayashi:
                 logN_min: 1
                 logN_max: 7
                 N_runs: 13
-
         implicit_capture:
             numba:
                 logN_min: 1
                 logN_max: 6
                 N_runs: 11
+    openmc:
+        logN_min: 1
+        logN_max: 7
+        N_runs: 13
 
 shem361:
     mcdc:
@@ -56,11 +63,14 @@ shem361:
                 logN_min: 1
                 logN_max: 5
                 N_runs: 9
-
             numba:
                 logN_min: 1
                 logN_max: 8
                 N_runs: 15
+    openmc:
+        logN_min: 1
+        logN_max: 8
+        N_runs: 15
 
 pincell:
     mcdc:
@@ -69,8 +79,11 @@ pincell:
                 logN_min: 1
                 logN_max: 3
                 N_runs: 7
-
             numba:
                 logN_min: 1
                 logN_max: 6
                 N_runs: 11
+    openmc:
+        logN_min: 1
+        logN_max: 6
+        N_runs: 11

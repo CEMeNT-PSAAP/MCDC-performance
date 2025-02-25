@@ -36,8 +36,10 @@ JOB_TIME['tuolumne'] = "24h"
 
 parser = argparse.ArgumentParser(description="MC/DC Performance Test Suite - Serial")
 parser.add_argument("--platform", type=str, required="True", choices=PLATFORMS)
+parser.add_argument("--save_recent_output", default=False, action="store_true")
 args, unargs = parser.parse_known_args()
 
+# Set platform parameters
 platform = args.platform
 job_submission = JOB_SUBMISSION[platform]
 job_scheduler = JOB_SCHEDULER[platform]
@@ -144,6 +146,9 @@ for problem in tasks:
                     commands += "rm %s.h5\n" % previous_output
 
                 previous_output = "output_%i" % N
+            # Delete recent output?
+            if not args.save_recent_output:
+                commands += "rm %s.h5\n" % previous_output
 
             # Finalize commands and PBS file
             pbs_text = pbs_text.replace('<COMMANDS>', commands)
@@ -154,9 +159,65 @@ for problem in tasks:
             os.system("%s submit.pbs" % job_submission)
 
             os.chdir("..")
-    os.chdir("../../..")
+    os.chdir("../../")
 
     # ==================================================================================
     # OpenMC
     # ==================================================================================
-    # TODO
+
+    # Only for Dane
+    if platform != "dane":
+        os.chdir("../")
+        continue
+
+    os.chdir("openmc")
+
+    # Create and get into output folder
+    Path("output").mkdir(parents=True, exist_ok=True)
+    os.chdir("output")
+
+    # Create and get into sub output folder
+    dir_output = "serial"
+    Path(dir_output).mkdir(parents=True, exist_ok=True)
+    os.chdir(dir_output)
+
+    # Copy necessary files
+    os.system("cp ../../* . 2>/dev/null")
+
+    # Start building the PBS file
+    pbs_text = pbs_template[:]
+    pbs_text = pbs_text.replace('<N_NODE>', '1')
+    pbs_text = pbs_text.replace('<JOB_NAME>', 'openmc-ser-%s' % problem)
+    pbs_text = pbs_text.replace('<TIME>', job_time)
+
+    # Run parameters
+    task = tasks[problem]["openmc"]
+    logN_min = task["logN_min"]
+    logN_max = task["logN_max"]
+    N_runs = task["N_runs"]
+
+    # Loop over runs
+    commands = ""
+    previous_output = None
+    for N in np.logspace(logN_min, logN_max, N_runs, dtype=int):
+        commands += "python build_xml.py %i\n" % (N)
+        commands += "openmc -s 1\n"
+        commands += "mv statepoint.30.h5 output_%i.h5\n" % N
+        commands += "python get_runtime.py output_%i.h5\n" % N
+        commands += "rm *xml\n"
+
+        # Delete previous output (note that runtimes are saved)
+        if previous_output is not None:
+            commands += "rm %s.h5\n" % previous_output
+
+        previous_output = "output_%i" % N
+
+    # Finalize commands and PBS file
+    pbs_text = pbs_text.replace('<COMMANDS>', commands)
+    with open(f"submit.pbs", 'w') as f:
+        f.write(pbs_text)
+
+    # Submit job
+    os.system("%s submit.pbs" % job_submission)
+
+    os.chdir("../../../..")

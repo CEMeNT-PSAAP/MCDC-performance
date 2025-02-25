@@ -80,7 +80,7 @@ mcdc.tally.mesh_tally(
 )
 
 # Setting
-mcdc.setting(N_particle=1e3, N_batch=50)
+mcdc.setting(N_particle=1e3, N_batch=30)
 if method == "analog":
     pass
 elif method == "implicit_capture":

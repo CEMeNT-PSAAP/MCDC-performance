@@ -5,5 +5,8 @@
 #BSUB -o output.out
 #BSUB -e output.err
 
+conda init bash
+source ~/.bashrc
 conda activate mcdc-interactive
+
 <COMMANDS>
