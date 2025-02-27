@@ -1,0 +1,36 @@
+azurv1: 
+    mcdc:
+        analog:
+            cpu: 10000000
+            gpu:
+    openmc: 
+kobayashi-coarse:
+    mcdc:
+        analog: 
+            cpu: 15000000
+            gpu:
+        implicit_capture: 
+            cpu: 12000000
+            gpu:
+    openmc: 
+kobayashi: 
+    mcdc:
+        analog:
+            cpu: 10000000
+            gpu:
+        implicit_capture: 
+            cpu: 8000000
+            gpu:
+    openmc: 
+shem361:
+    mcdc:
+        analog: 
+            cpu: 125000
+            gpu:
+    openmc: 
+pincell:
+    mcdc:
+        analog: 
+            cpu: 1000
+            gpu:
+    openmc: 
