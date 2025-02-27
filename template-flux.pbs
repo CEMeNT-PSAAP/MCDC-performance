@@ -2,7 +2,7 @@
 #flux: -N <N_NODE>
 #flux: --job-name <JOB_NAME>
 #flux: -t <TIME>
-#flux: --output output.out
-#flux: --error output.err
+#flux: --output output<CASE>.out
+#flux: --error output<CASE>.err
 
 <COMMANDS>

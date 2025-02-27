@@ -130,12 +130,6 @@ for problem in tasks:
             commands = ""
             previous_output = None
             for N in np.logspace(logN_min, logN_max, N_runs, dtype=int):
-                output_name = "output_ser_%s_%s_%s_%i" % (
-                    platform[:3],
-                    method[:3],
-                    mode[:3],
-                    N,
-                )
                 commands += (
                     "python input.py %s --mode=%s --N_particle=%i --output=output_%i --no-progress_bar --caching --runtime_output\n"
                     % (method, mode, N, N)
@@ -189,6 +183,7 @@ for problem in tasks:
     pbs_text = pbs_text.replace('<N_NODE>', '1')
     pbs_text = pbs_text.replace('<JOB_NAME>', 'openmc-ser-%s' % problem)
     pbs_text = pbs_text.replace('<TIME>', job_time)
+    pbs_text = pbs_text.replace('<CASE>', "")
 
     # Run parameters
     task = tasks[problem]["openmc"]
