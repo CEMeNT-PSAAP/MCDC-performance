@@ -10,54 +10,46 @@ from pathlib import Path
 
 
 # Supported compute platforms and their parameters
-PLATFORMS = ["dane", "lassen", "tioga", "tuolumne"]
+PLATFORMS = ["dane", "lassen", "tuolumne"]
 #
 JOB_SUBMISSION = {}
 JOB_SUBMISSION["dane"] = 'sbatch'
 JOB_SUBMISSION["lassen"] = 'bsub'
-JOB_SUBMISSION["tioga"] = 'flux batch'
 JOB_SUBMISSION["tuolumne"] = 'flux batch'
 #
 JOB_SCHEDULER = {}
 JOB_SCHEDULER["dane"] = 'slurm'
 JOB_SCHEDULER["lassen"] = 'lsf'
-JOB_SCHEDULER["tioga"] = 'flux'
 JOB_SCHEDULER["tuolumne"] = 'flux'
 #
 JOB_TIME = {}
 JOB_TIME['dane'] = "XX:00:00"
 JOB_TIME['lassen'] = "XX:00"
-JOB_TIME['tioga'] = "XXh"
 JOB_TIME['tuolumne'] = "XXh"
 #
 MAX_TIME = {}
 MAX_TIME['dane'] = 24
 MAX_TIME['lassen'] = 12
-MAX_TIME['tioga'] = 12
 MAX_TIME['tuolumne'] = 24
 #
 CPU_CORES_PER_NODE = {}
 CPU_CORES_PER_NODE["dane"] = 112
 CPU_CORES_PER_NODE["lassen"] = 44
-CPU_CORES_PER_NODE["tioga"] = 64
 CPU_CORES_PER_NODE["tuolumne"] = 96
 #
 GPUS_PER_NODE = {}
 GPUS_PER_NODE["dane"] = 0
 GPUS_PER_NODE["lassen"] = 4
-GPUS_PER_NODE["tioga"] = 4
 GPUS_PER_NODE["tuolumne"] = 4
 #
 MAX_NODES = {}
 MAX_NODES["dane"] = 520
 MAX_NODES["lassen"] = 256
-MAX_NODES["tioga"] = 16 # Can be higher
 MAX_NODES["tuolumne"] = 512 # Can be higher
 #
 MAX_NODES = {}
 MAX_NODES["dane"] = 520
 MAX_NODES["lassen"] = 256
-MAX_NODES["tioga"] = 16 # Can be higher
 MAX_NODES["tuolumne"] = 512 # Can be higher
 
 

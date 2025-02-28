@@ -10,24 +10,21 @@ from pathlib import Path
 
 
 # Supported compute platforms and their parameters
-PLATFORMS = ["dane", "lassen", "tioga", "tuolumne"]
+PLATFORMS = ["dane", "lassen", "tuolumne"]
 #
 JOB_SUBMISSION = {}
 JOB_SUBMISSION["dane"] = 'sbatch'
 JOB_SUBMISSION["lassen"] = 'bsub'
-JOB_SUBMISSION["tioga"] = 'flux batch'
 JOB_SUBMISSION["tuolumne"] = 'flux batch'
 #
 JOB_SCHEDULER = {}
 JOB_SCHEDULER["dane"] = 'slurm'
 JOB_SCHEDULER["lassen"] = 'lsf'
-JOB_SCHEDULER["tioga"] = 'flux'
 JOB_SCHEDULER["tuolumne"] = 'flux'
 #
 JOB_TIME = {}
 JOB_TIME['dane'] = "24:00:00"
 JOB_TIME['lassen'] = "12:00"
-JOB_TIME['tioga'] = "12h"
 JOB_TIME['tuolumne'] = "24h"
 
 # ======================================================================================
