@@ -14,48 +14,6 @@ PLATFORMS = ["dane", "lassen", "tioga", "tuolumne"]
 # Line styles
 STYLE = {"python": "g^-", "numba": "bo--", "openmc": "rs:"}
 
-# ======================================================================================
-# Numba compile time
-# ======================================================================================
-# Temporary: manually determined by uncommenting [GET COMPILE TIME] below
-# Will be replaced when better caching mechanics are implemented
-
-nested_dict = lambda: collections.defaultdict(nested_dict)
-COMPILE_TIME = nested_dict()
-#
-COMPILE_TIME["dane"]["azurv1"]["analog"] = 43.07236623764038
-COMPILE_TIME["dane"]["kobayashi-coarse"]["analog"] = 43.231773138046265
-COMPILE_TIME["dane"]["kobayashi-coarse"]["implicit_capture"] = 43.23833656311035
-COMPILE_TIME["dane"]["kobayashi"]["analog"] = 54.9150824546814
-COMPILE_TIME["dane"]["kobayashi"]["implicit_capture"] = 54.820361614227295
-COMPILE_TIME["dane"]["shem361"]["analog"] = 45.87299680709839
-COMPILE_TIME["dane"]["pincell"]["analog"] = 44.184755025
-#
-COMPILE_TIME["lassen"]["azurv1"]["analog"] = 44.779712438583374
-COMPILE_TIME["lassen"]["kobayashi-coarse"]["analog"] = 43.325393946
-COMPILE_TIME["lassen"]["kobayashi-coarse"]["implicit_capture"] = 43.353021065
-COMPILE_TIME["lassen"]["kobayashi"]["analog"] = 55.095778819
-COMPILE_TIME["lassen"]["kobayashi"]["implicit_capture"] = 55.052752989
-COMPILE_TIME["lassen"]["shem361"]["analog"] = 46.255581683
-COMPILE_TIME["lassen"]["pincell"]["analog"] = 44.184755025
-#
-COMPILE_TIME["tioga"]["azurv1"]["analog"] = 107.16409755599989
-COMPILE_TIME["tioga"]["kobayashi-coarse"]["analog"] = 107.08078032900016
-COMPILE_TIME["tioga"]["kobayashi-coarse"]["implicit_capture"] = 107.5788309530003
-COMPILE_TIME["tioga"]["kobayashi"]["analog"] = 125.50681239000005
-COMPILE_TIME["tioga"]["kobayashi"]["implicit_capture"] = 125.72471901399967
-COMPILE_TIME["tioga"]["shem361"]["analog"] = 139.97926422299997
-COMPILE_TIME["tioga"]["pincell"]["analog"] = 120.22446619599987
-#
-COMPILE_TIME["tuolumne"]["azurv1"]["analog"] = 43.288844207
-COMPILE_TIME["tuolumne"]["kobayashi-coarse"]["analog"] = 43.325393946
-COMPILE_TIME["tuolumne"]["kobayashi-coarse"]["implicit_capture"] = 43.353021065
-COMPILE_TIME["tuolumne"]["kobayashi"]["analog"] = 55.095778819
-COMPILE_TIME["tuolumne"]["kobayashi"]["implicit_capture"] = 55.052752989
-COMPILE_TIME["tuolumne"]["shem361"]["analog"] = 46.255581683
-COMPILE_TIME["tuolumne"]["pincell"]["analog"] = 44.184755025
-
-# TODO: Lassen, ...
 
 # ======================================================================================
 # Run options
@@ -95,15 +53,42 @@ for problem in tasks:
     # ==================================================================================
     # OpenMC (analog)
     # ==================================================================================
-    # TODO
 
+    os.chdir("openmc")
     record[problem]["OpenMC"] = {}
+
+    # Output directory
+    dir_output = "output/serial"
+
+    # Run parameters
+    task = tasks[problem]["openmc"]
+    logN_min = task["logN_min"]
+    logN_max = task["logN_max"]
+    N_runs = task["N_runs"]
+    N_list = np.logspace(logN_min, logN_max, N_runs, dtype=int)
+
+    # Set runtimes and simulation rates
+    runtime_openmc = np.zeros(N_runs, dtype=float)
+    simrate_openmc = np.zeros(N_runs, dtype=float)
+    imax = N_runs
+    for i in range(N_runs):
+        N = N_list[i]
+        file_name = "%s/output_%i-runtime.h5" % (dir_output, N)
+        if not os.path.isfile(file_name):
+            imax = i
+            break
+        with h5py.File(file_name, "r") as f:
+            runtime_openmc[i] = f["runtime/simulation"][()]
+            simrate_openmc[i] = 10 * N / runtime_openmc[i] * 1e-3
+
+    # Record
+    record[problem]["OpenMC"]["tracking_rate"] = float(simrate_openmc[imax - 1])
 
     # ==================================================================================
     # MC/DC
     # ==================================================================================
 
-    os.chdir("mcdc")
+    os.chdir("../mcdc")
     record[problem]["MC/DC"] = {}
 
     # Loop over methods
@@ -142,19 +127,15 @@ for problem in tasks:
                     runtime[i] = f["simulation"][()]
                     simrate[i] = 10 * N / runtime[i] * 1e-3
 
-                # [GET COMPILE TIME] uncomment below to predict compile time
-                if mode == "numba":
-                    print(problem, platform, method, N, runtime[i])
-
             # Record
-            record[problem]["MC/DC"][method][mode]["tracking_rate"] = float(simrate[-1])
+            record[problem]["MC/DC"][method][mode]["tracking_rate"] = float(simrate[imax-1])
             if mode == "numba":
-                compile_time = COMPILE_TIME[platform][problem][method]
+                compile_time = np.min(runtime[:imax])
                 record[problem]["MC/DC"][method][mode]["compile_time"] = compile_time
                 runtime_wo_compilation = runtime - compile_time
                 simrate_wo_compilation = 10 * N_list / runtime_wo_compilation * 1e-3
                 record[problem]["MC/DC"][method][mode]["tracking_rate"] = float(
-                    simrate_wo_compilation[-1]
+                    simrate_wo_compilation[imax-1]
                 )
 
             # Plot
@@ -188,6 +169,24 @@ for problem in tasks:
                     fillstyle="none",
                     label="MC/DC-numba (w/o comp.)",
                 )
+
+                # Plot OpenMC
+                if method == 'analog':
+                    ax_runtime.plot(
+                        N_list[:imax] * 10,
+                        runtime_openmc[:imax],
+                        STYLE['openmc'],
+                        fillstyle="none",
+                        label="OpenMC",
+                    )
+                    ax_simrate.plot(
+                        N_list[:imax] * 10,
+                        simrate_openmc[:imax],
+                        STYLE['openmc'],
+                        fillstyle="none",
+                        label="OpenMC",
+                    )
+
 
         # Plot settings
         ax_runtime.set_xscale("log")
