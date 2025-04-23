@@ -1,0 +1,28 @@
+azurv1:
+    analog:
+        python: [1, 5, 9]
+        numba:  [1, 8, 15]
+
+kobayashi-coarse:
+    analog:
+        python: [1, 5, 9]
+        numba:  [1, 8, 15]
+    implicit_capture:
+        python: [1, 4, 7]
+        numba:  [1, 7, 13]
+
+kobayashi:
+    analog:
+        numba:  [1, 7, 13]
+    implicit_capture:
+        numba:  [1, 6, 11]
+
+shem361:
+    analog:
+        python: [1, 5, 9]
+        numba:  [1, 8, 15]
+
+pincell:
+    analog:
+        python: [1, 3, 7]
+        numba:  [1, 6, 11]
