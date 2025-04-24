@@ -2,25 +2,3 @@ azurv1:
     analog:
         cpu: 10000000
         gpu:
-kobayashi-coarse:
-    analog:
-        cpu: 15000000
-        gpu:
-    implicit_capture: 
-        cpu: 12000000
-        gpu:
-kobayashi: 
-    analog:
-        cpu: 10000000
-        gpu:
-    implicit_capture:
-        cpu: 8000000
-        gpu:
-shem361:
-    analog: 
-        cpu: 125000
-        gpu:
-pincell:
-    analog:
-        cpu: 1000
-        gpu:

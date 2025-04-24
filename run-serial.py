@@ -43,7 +43,7 @@ job_scheduler = JOB_SCHEDULER[platform]
 job_time = JOB_TIME[platform]
 
 # Get the PBS template
-with open("template-%s.pbs"%job_scheduler, 'r') as f:
+with open("pbs_templates/%s.pbs"%job_scheduler, 'r') as f:
     pbs_template = f.read()
 
 
@@ -76,7 +76,7 @@ with open("machine_spec.yaml", "w") as f:
 
 # Read the tasks
 os.chdir("../../../")
-with open("task-serial.yaml", "r") as file:
+with open("tasks/serial.yaml", "r") as file:
     tasks = yaml.safe_load(file)
 
 # ======================================================================================
@@ -100,9 +100,9 @@ for problem in tasks:
     os.chdir("output")
 
     # Loop over methods
-    for method in tasks[problem]["mcdc"]:
+    for method in tasks[problem]:
         # Loop over modes
-        for mode in tasks[problem]["mcdc"][method]:
+        for mode in tasks[problem][method]:
             # Create and get into sub output folder
             dir_output = "serial-%s-%s-%s" % (platform, method, mode)
             Path(dir_output).mkdir(parents=True, exist_ok=True)
@@ -116,17 +116,15 @@ for problem in tasks:
             pbs_text = pbs_text.replace('<N_NODE>', '1')
             pbs_text = pbs_text.replace('<JOB_NAME>', 'mcdc-ser-%s-%s-%s' % (problem, method, mode))
             pbs_text = pbs_text.replace('<TIME>', job_time)
+            pbs_text = pbs_text.replace('<CASE>', "")
 
             # Run parameters
-            task = tasks[problem]["mcdc"][method][mode]
-            logN_min = task["logN_min"]
-            logN_max = task["logN_max"]
-            N_runs = task["N_runs"]
+            start, stop, num = tasks[problem][method][mode]
 
             # Loop over runs
             commands = ""
             previous_output = None
-            for N in np.logspace(logN_min, logN_max, N_runs, dtype=int):
+            for N in np.logspace(start, stop, num, dtype=int):
                 commands += (
                     "python input.py %s --mode=%s --N_particle=%i --output=output_%i --no-progress_bar --caching --runtime_output\n"
                     % (method, mode, N, N)
@@ -183,15 +181,12 @@ for problem in tasks:
     pbs_text = pbs_text.replace('<CASE>', "")
 
     # Run parameters
-    task = tasks[problem]["openmc"]
-    logN_min = task["logN_min"]
-    logN_max = task["logN_max"]
-    N_runs = task["N_runs"]
+    start, stop, num = tasks[problem]["analog"]["numba"]
 
     # Loop over runs
     commands = ""
     previous_output = None
-    for N in np.logspace(logN_min, logN_max, N_runs, dtype=int):
+    for N in np.logspace(start, stop, num, dtype=int):
         commands += "python build-xml.py %i\n" % (N)
         commands += "openmc -s 1\n"
         commands += "mv statepoint.30.h5 output_%i.h5\n" % N
