@@ -1,31 +1,26 @@
 azurv1: 
-    mcdc:
-        analog:
-            cpu: 10000000
-            gpu:
+    analog:
+        cpu: 10000000
+        gpu:
 kobayashi-coarse:
-    mcdc:
-        analog:
-            cpu: 15000000
-            gpu:
-        implicit_capture: 
-            cpu: 12000000
-            gpu:
+    analog:
+        cpu: 15000000
+        gpu:
+    implicit_capture: 
+        cpu: 12000000
+        gpu:
 kobayashi: 
-    mcdc:
-        analog:
-            cpu: 10000000
-            gpu:
-        implicit_capture:
-            cpu: 8000000
-            gpu:
+    analog:
+        cpu: 10000000
+        gpu:
+    implicit_capture:
+        cpu: 8000000
+        gpu:
 shem361:
-    mcdc:
-        analog: 
-            cpu: 125000
-            gpu:
+    analog: 
+        cpu: 125000
+        gpu:
 pincell:
-    mcdc:
-        analog:
-            cpu: 1000
-            gpu:
+    analog:
+        cpu: 1000
+        gpu:
