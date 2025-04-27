@@ -20,6 +20,9 @@ shem361:
     analog: 
         cpu: 125000
         gpu:
+    implicit_capture: 
+        cpu: 100000
+        gpu:
 pincell:
     analog:
         cpu: 1000

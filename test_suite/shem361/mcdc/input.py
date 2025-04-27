@@ -3,7 +3,7 @@ import mcdc
 import sys
 
 method = sys.argv[1]
-if method not in ["analog"]:
+if method not in ["analog", "implicit_capture"]:
     print("[ERROR] Unsupported method: %s" % method)
     exit()
 
@@ -70,6 +70,10 @@ mcdc.tally.mesh_tally(
 
 # Setting
 mcdc.setting(N_particle=1e3, N_batch=30, active_bank_buff=10000)
+if method == "analog":
+    pass
+elif method == "implicit_capture":
+    mcdc.implicit_capture()
 
 # Run
 mcdc.run()
