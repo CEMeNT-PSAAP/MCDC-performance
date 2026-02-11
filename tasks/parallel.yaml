@@ -1,26 +1,20 @@
-azurv1: 
+kobayashi:
     analog:
-        cpu: 10000000
-        gpu:
-kobayashi-coarse:
-    analog:
-        cpu: 15000000
-        gpu:
-    implicit_capture: 
-        cpu: 12000000
-        gpu:
-kobayashi: 
-    analog:
-        cpu: 10000000
-        gpu:
+        dane:
+            cpu:    2200000000
+            openmc: 1300000000
+        tuolumne:
+            cpu: 1350000000
+            gpu: 0
+        lassen:
+            cpu: 300000000
+            gpu: 0
     implicit_capture:
-        cpu: 8000000
-        gpu:
-shem361:
-    analog: 
-        cpu: 125000
-        gpu:
-pincell:
-    analog:
-        cpu: 1000
-        gpu:
+        dane:
+            cpu: 297000000
+        tuolumne:
+            cpu: 162000000
+            gpu: 0
+        lassen:
+            cpu: 45000000
+            gpu: 0

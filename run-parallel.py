@@ -29,12 +29,12 @@ JOB_TIME['tuolumne'] = "XXh"
 #
 MAX_TIME = {}
 MAX_TIME['dane'] = 24
-MAX_TIME['lassen'] = 24 #12
+MAX_TIME['lassen'] = 24 # Actual max: 12
 MAX_TIME['tuolumne'] = 24
 #
 CPU_CORES_PER_NODE = {}
 CPU_CORES_PER_NODE["dane"] = 112
-CPU_CORES_PER_NODE["lassen"] = 44
+CPU_CORES_PER_NODE["lassen"] = 40 # 44
 CPU_CORES_PER_NODE["tuolumne"] = 96
 #
 GPUS_PER_NODE = {}
@@ -43,9 +43,9 @@ GPUS_PER_NODE["lassen"] = 4
 GPUS_PER_NODE["tuolumne"] = 4
 #
 MAX_NODES = {}
-MAX_NODES["dane"] = 1024 # Actual limit: 520
-MAX_NODES["lassen"] = 512 # Actual limit: 256
-MAX_NODES["tuolumne"] = 1024 # No strict limit
+MAX_NODES["dane"] = 128 # Actual limit: 520
+MAX_NODES["lassen"] = 128 # Actual limit: 256
+MAX_NODES["tuolumne"] = 128 # No strict limit
 
 
 # ======================================================================================
@@ -126,9 +126,13 @@ for problem in tasks:
     # Loop over methods
     for method in tasks[problem]:
         # Loop over modes
-        for mode in tasks[problem][method]:
+        for mode in tasks[problem][method][platform]:
             # Only-CPU platform?
             if platform in ['dane'] and mode == 'gpu':
+                continue
+
+            # OpenMC?
+            if mode == 'openmc':
                 continue
 
             # TODO: GPU mode
@@ -136,7 +140,7 @@ for problem in tasks:
                 continue
 
             # Run parameter
-            N_base = tasks[problem][method][mode]
+            N_base = tasks[problem][method][platform][mode]
 
             for N_node in [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]:
                 N_rank = N_node * cpu_cores_per_node
@@ -188,7 +192,7 @@ for problem in tasks:
                         f.write(pbs_text)
 
                     # Submit job
-                    #os.system("%s submit-%s.pbs" % (job_submission, case))
+                    os.system("%s submit-%s.pbs" % (job_submission, case))
 
                 # Submit cases
                 submit_case("case1", 3, [-4, -3, -2, -1, 0])
@@ -216,7 +220,7 @@ for problem in tasks:
     os.chdir("output")
 
     # Run parameter
-    N_base = tasks[problem]['analog']['cpu']
+    N_base = tasks[problem]['analog']['dane']['openmc']
 
     for N_node in [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]:
         N_rank = N_node * cpu_cores_per_node

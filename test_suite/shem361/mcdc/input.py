@@ -13,7 +13,7 @@ if method not in ["analog"]:
 # =============================================================================
 # The infinite homogenous medium is modeled with reflecting slab
 
-# Materials
+# Load material data
 with np.load("MGXS-SHEM361.npz") as data:
     SigmaC = data["SigmaC"] * 1.5  # /cm
     SigmaS = data["SigmaS"]
@@ -25,8 +25,9 @@ with np.load("MGXS-SHEM361.npz") as data:
     G = data["G"]
     speed = data["v"]
     lamd = data["lamd"]
-#
-m = mcdc.material(
+
+# Set material
+m = mcdc.MaterialMG(
     capture=SigmaC,
     scatter=SigmaS,
     fission=SigmaF,
@@ -34,42 +35,41 @@ m = mcdc.material(
     chi_p=chi_p,
     nu_d=nu_d,
     chi_d=chi_d,
-    decay=lamd,
+    decay_rate=lamd,
     speed=speed,
 )
 
-# Surfaces
-s1 = mcdc.surface("plane-x", x=-1e10, bc="reflective")
-s2 = mcdc.surface("plane-x", x=1e10, bc="reflective")
+# Set surfaces
+s1 = mcdc.Surface.PlaneX(x=-1e10, boundary_condition="reflective")
+s2 = mcdc.Surface.PlaneX(x=1e10, boundary_condition="reflective")
 
-# Cells
-c = mcdc.cell(+s1 & -s2, m)
+# Set cells
+c = mcdc.Cell(region=+s1 & -s2, fill=m)
 
 # =============================================================================
 # Set source
 # =============================================================================
 # At highest group
 
-energy = np.zeros(G)
-energy[-1] = 1.0
-source = mcdc.source(energy=energy)
+mcdc.Source(
+    position=(0.0, 0.0, 0.0), isotropic=True, energy_group=np.array([[360], [1.0]])
+)
 
 # =============================================================================
 # Set tally, setting, and run mcdc
 # =============================================================================
 
 # Tally
-time_grid = np.insert(np.logspace(-8, 1, 100), 0, 0.0)
-mcdc.tally.mesh_tally(
-    scores=["flux"], t=time_grid, g="all"
-)
-mcdc.tally.mesh_tally(
-    scores=["density"],
-    t=time_grid,
+mcdc.TallyGlobal(
+    scores=["flux"],
+    time=np.insert(np.logspace(-8, 1, 100), 0, 0.0),
+    energy="all_groups",
 )
 
 # Setting
-mcdc.setting(N_particle=1e3, N_batch=30, active_bank_buff=10000)
+mcdc.settings.N_particle = 1000
+mcdc.settings.N_batch = 30
+mcdc.settings.active_bank_buffer = 10000
 
 # Run
 mcdc.run()
